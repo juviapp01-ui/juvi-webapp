@@ -36,3 +36,19 @@ export const GENDER_OPTIONS = [
 ] as const;
 
 export const LOGO = '/assets/images/logo.png';
+
+// Fraction collected as advance at booking time — a display estimate only;
+// the backend's booking.advanceAmount is authoritative. (Same as the app.)
+export const ADVANCE_PAYMENT_PERCENTAGE = 0.5;
+
+export const CANCELLATION_POLICY = {
+  fullRefundHours: 24, // >24h => 100%
+  partialRefundHours: 12, // 12-24h => 50%
+  partialRefundRate: 0.5, // <12h => 0%
+};
+
+export const LOYALTY_TIERS = [
+  { tier: 'bronze', min: 0 },
+  { tier: 'silver', min: 500 },
+  { tier: 'gold', min: 2000 },
+] as const;

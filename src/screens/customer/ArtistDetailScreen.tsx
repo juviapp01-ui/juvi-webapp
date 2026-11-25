@@ -118,10 +118,10 @@ export default function ArtistDetailScreen() {
           <View className="fade-up" style={styles.headerRow}>
             <View style={styles.headerLeft}>
               <Text style={styles.nameText}>{artist.name}</Text>
-              <View style={styles.ratingRow}>
+              <PressableScale scaleTo={0.97} onPress={() => navigate(`/artist/${artistId}/reviews`)} style={styles.ratingRow} ariaLabel={`Rated ${artist.rating}, ${artist.reviewCount} reviews`}>
                 <StarRating value={artist.rating} />
                 <Text style={styles.ratingLinkText}>({artist.reviewCount} Reviews)</Text>
-              </View>
+              </PressableScale>
             </View>
             <View style={styles.headerRight}>
               {/* Elite (subscription) and Verified (KYC) are separate facts. */}
@@ -259,7 +259,7 @@ export default function ArtistDetailScreen() {
         <Button
           title={serviceIds.length > 0 ? `Book ${serviceIds.length} Service${serviceIds.length > 1 ? 's' : ''}` : 'Select a Service'}
           disabled={serviceIds.length === 0}
-          onPress={() => navigate('/book', { state: { artistId, serviceIds } })}
+          onPress={() => navigate(`/book?artist=${encodeURIComponent(artistId ?? '')}&services=${serviceIds.map(encodeURIComponent).join(',')}`)}
         />
       </View>
     </View>

@@ -1,6 +1,10 @@
-// Payment types shared with the app (frontend/src/api/payments.ts).
-// Types only: payments are stubbed on the website until the Paytm web flow
-// exists (see README → Payments), so nothing here calls the payment API.
+import { api } from './client';
+
+// Payment types and calls shared with the app (frontend/src/api/payments.ts).
+// Paying is stubbed on the website until the Paytm web flow exists (see
+// README → Payments), so there is no create-order / verify here. Refunds are a
+// backend call — the server decides eligibility and amount — so cancelling a
+// booking that was paid in the app works on the website too.
 
 export type PaymentStage = 'ADVANCE' | 'FINAL';
 
@@ -15,3 +19,14 @@ export interface CreateOrderResponse {
   bookingId?: string;
   message?: string;
 }
+
+export interface RefundResponse {
+  success: boolean;
+  refunded?: number;
+  pending?: boolean;
+  message?: string;
+}
+
+export const paymentsApi = {
+  refund: (bookingId: string, stage: PaymentStage) => api.post<RefundResponse>(`/payments/${bookingId}/refund`, { stage }),
+};

@@ -11,6 +11,9 @@ export const ENV = {
     appId: read('VITE_FIREBASE_APP_ID'),
     messagingSenderId: read('VITE_FIREBASE_MESSAGING_SENDER_ID'),
   },
+  // Chat's live connection. Defaults to the API's own host over wss://, which
+  // is how the app's settings pair the two.
+  WS_URL: read('VITE_WS_URL') || read('VITE_API_URL').replace(/\/+$/, '').replace(/^http/, 'ws'),
   GOOGLE_MAPS_KEY: read('VITE_GOOGLE_MAPS_KEY'),
   PAYTM_ENV: read('VITE_PAYTM_ENV') || 'STAGING',
 };

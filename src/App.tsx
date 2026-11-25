@@ -1,5 +1,5 @@
 import { useEffect, useState, type ReactNode } from 'react';
-import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
+import { Navigate, Route, Routes, useLocation, useParams } from 'react-router-dom';
 import { missingEnv } from '@/config/env';
 import { RECAPTCHA_CONTAINER_ID } from '@/lib/firebase';
 import { profileApi } from '@/api';
@@ -24,6 +24,11 @@ import SearchResultsScreen from '@/screens/customer/SearchResultsScreen';
 import { TrendDecodeListScreen, TrendDecodeViewerScreen } from '@/screens/customer/TrendDecodeScreens';
 import { CourseDetailScreen, CourseListScreen, CoursePaymentScreen, CoursesHomeScreen } from '@/screens/customer/CoursesScreens';
 import LessonPlayerScreen from '@/screens/customer/LessonPlayerScreen';
+import { BookingConfirmScreen, BookingPayScreen, SlotPickerScreen } from '@/screens/booking/BookingFlow';
+import { BookingDetailScreen, BookingPaymentScreen, CancelBookingScreen, MyBookingsScreen, RescheduleBookingScreen, WriteReviewScreen } from '@/screens/booking/Bookings';
+import { EditProfileScreen, LoyaltyScreen, NotificationsScreen, PaymentMethodsScreen, ProfileTabScreen, ReferralScreen, ReviewsScreen, SavedAddressesScreen } from '@/screens/account/Account';
+import { BlockedAccountsScreen, DeleteAccountScreen, HelpSupportScreen, LegalScreen, NotificationPreferencesScreen, SettingsScreen } from '@/screens/account/Settings';
+import { ChatListScreen, ChatRoomScreen } from '@/screens/chat/Chat';
 
 // ─── Who may see what ────────────────────────────────────────────────────────
 // Mirrors the app's RootNavigator: signed out → sign-in; signed in without a
@@ -63,9 +68,17 @@ function CustomerOnly({ children }: { children: ReactNode }) {
   return <>{children}</>;
 }
 
+// Pages for anyone signed in (settings, help, legal), customer or artist.
+const SignedIn = PartnerAreaGuard;
+
+function ArtistReviewsRoute() {
+  const { artistId = '' } = useParams();
+  return <ReviewsScreen artistId={artistId} />;
+}
+
 // Partner area: approved artists, and customers who applied to become one
 // (they see their application there, as the app's ApplicationStatus).
-function PartnerArea({ children }: { children: ReactNode }) {
+function PartnerAreaGuard({ children }: { children: ReactNode }) {
   const { isAuthenticated, named } = useSession();
   if (!isAuthenticated) return <Navigate to="/login" replace />;
   if (!named) return <Navigate to="/setup" replace />;
@@ -126,6 +139,11 @@ export default function App() {
       <ComingSoonScreen title={title} inTabs={inTabs} />
     </Page>
   );
+  const signedIn = (title: string, element: ReactNode) => (
+    <SignedIn>
+      <Page title={title}>{element}</Page>
+    </SignedIn>
+  );
   const customer = (title: string, element: ReactNode) => (
     <CustomerOnly>
       <Page title={title}>{element}</Page>
@@ -149,8 +167,8 @@ export default function App() {
               <Route path="/home" element={<Page title="Home"><HomeScreen /></Page>} />
               <Route path="/explore" element={<Page title="Explore artists"><ExploreScreen /></Page>} />
               <Route path="/reels" element={<Page title="Reels"><ReelsFeedScreen /></Page>} />
-              <Route path="/chat" element={soon('Messages', true)} />
-              <Route path="/profile" element={soon('Your profile', true)} />
+              <Route path="/chat" element={<Page title="Messages"><ChatListScreen /></Page>} />
+              <Route path="/profile" element={<Page title="You"><ProfileTabScreen /></Page>} />
             </Route>
 
             {/* Customer pages */}
@@ -166,10 +184,36 @@ export default function App() {
             <Route path="/courses/:courseId" element={customer('Course', <CourseDetailScreen />)} />
             <Route path="/courses/:courseId/pay" element={customer('Checkout', <CoursePaymentScreen />)} />
             <Route path="/courses/:courseId/lesson/:lessonId" element={customer('Lesson', <LessonPlayerScreen />)} />
-            <Route path="/book" element={<CustomerOnly>{soon('Booking')}</CustomerOnly>} />
+            <Route path="/artist/:artistId/reviews" element={customer('Reviews', <ArtistReviewsRoute />)} />
+
+            {/* Booking */}
+            <Route path="/book" element={customer('Choose a time', <SlotPickerScreen />)} />
+            <Route path="/book/confirm" element={customer('Confirm booking', <BookingConfirmScreen />)} />
+            <Route path="/book/pay" element={customer('Payment', <BookingPayScreen />)} />
+            <Route path="/bookings" element={customer('My bookings', <MyBookingsScreen />)} />
+            <Route path="/bookings/:id" element={customer('Booking', <BookingDetailScreen />)} />
+            <Route path="/bookings/:id/pay" element={customer('Payment', <BookingPaymentScreen />)} />
+            <Route path="/bookings/:id/cancel" element={customer('Cancel booking', <CancelBookingScreen />)} />
+            <Route path="/bookings/:id/reschedule" element={customer('Reschedule', <RescheduleBookingScreen />)} />
+            <Route path="/bookings/:id/review" element={customer('Write a review', <WriteReviewScreen />)} />
+            <Route path="/chat/:bookingId" element={customer('Messages', <ChatRoomScreen />)} />
+
+            {/* Account */}
+            <Route path="/profile/edit" element={customer('Edit profile', <EditProfileScreen />)} />
+            <Route path="/profile/addresses" element={customer('Saved addresses', <SavedAddressesScreen />)} />
+            <Route path="/profile/payment-methods" element={customer('Payment methods', <PaymentMethodsScreen />)} />
+            <Route path="/referral" element={customer('Refer & earn', <ReferralScreen />)} />
+            <Route path="/rewards" element={customer('JUVI Rewards', <LoyaltyScreen />)} />
+            <Route path="/notifications" element={signedIn('Notifications', <NotificationsScreen />)} />
+            <Route path="/settings" element={signedIn('Settings', <SettingsScreen />)} />
+            <Route path="/settings/notifications" element={signedIn('Notification settings', <NotificationPreferencesScreen />)} />
+            <Route path="/settings/blocked" element={signedIn('Blocked accounts', <BlockedAccountsScreen />)} />
+            <Route path="/settings/delete-account" element={signedIn('Delete account', <DeleteAccountScreen />)} />
+            <Route path="/help" element={signedIn('Help & support', <HelpSupportScreen />)} />
+            <Route path="/legal" element={<Page title="Terms & privacy"><LegalScreen /></Page>} />
 
             {/* Partner area */}
-            <Route path="/partner/*" element={<PartnerArea>{soon('Partner')}</PartnerArea>} />
+            <Route path="/partner/*" element={<PartnerAreaGuard>{soon('Partner')}</PartnerAreaGuard>} />
 
             <Route path="*" element={<Page title="Page not found"><NotFoundScreen /></Page>} />
           </Routes>

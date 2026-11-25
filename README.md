@@ -38,6 +38,7 @@ Names only — the values are yours and `.env` is never committed.
 | Name | Required | What it is |
 |---|---|---|
 | `VITE_API_URL` | yes | The JUVI backend (same API the app uses) |
+| `VITE_WS_URL` | no | Chat's live connection; defaults to the API host over `wss://` |
 | `VITE_FIREBASE_API_KEY` | yes | Firebase **Web app** config, same project as the mobile app |
 | `VITE_FIREBASE_AUTH_DOMAIN` | yes | 〃 |
 | `VITE_FIREBASE_PROJECT_ID` | yes | 〃 |

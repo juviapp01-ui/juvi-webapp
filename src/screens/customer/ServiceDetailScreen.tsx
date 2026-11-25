@@ -111,7 +111,7 @@ export default function ServiceDetailScreen() {
           <Text style={styles.priceLabel}>Price</Text>
           <Text style={styles.priceValue}>{formatPrice(service.price)}</Text>
         </View>
-        <PressableScale style={styles.bookBtn} onPress={() => navigate('/book', { state: { artistId, serviceIds: [serviceId] } })}>
+        <PressableScale style={styles.bookBtn} onPress={() => navigate(`/book?artist=${encodeURIComponent(artistId ?? '')}&services=${encodeURIComponent(serviceId ?? '')}`)}>
           <Text style={styles.bookBtnText}>Book Now</Text>
           <Icon name="arrow-forward" size={16} color="#FFFFFF" />
         </PressableScale>
