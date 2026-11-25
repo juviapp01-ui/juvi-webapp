@@ -1,0 +1,7 @@
+node_modules/
+dist/
+.vercel
+
+# Local config. Values belong in .env.example, not here.
+.env
+.env*.local
