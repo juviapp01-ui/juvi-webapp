@@ -124,6 +124,11 @@ export function rn(style: RNStyle | null | undefined | false): CSSProperties {
     }
   }
 
+  // CSS lets a tall image stretch an aspect-ratio box (its min-height is
+  // "auto", i.e. the content); in RN the ratio always wins. min-height: 0
+  // gives the RN behaviour.
+  if (out.aspectRatio !== undefined && out.minHeight === undefined) out.minHeight = 0;
+
   if (shadow && (shadow.opacity ?? 0) > 0) {
     out.boxShadow = `${shadow.x ?? 0}px ${shadow.y ?? 0}px ${shadow.radius ?? 0}px ${hexToRgba(
       shadow.color ?? '#000000',

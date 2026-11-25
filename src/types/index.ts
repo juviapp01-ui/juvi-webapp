@@ -348,6 +348,8 @@ export interface CourseLesson {
   // GET /courses/:id/lessons/:lessonId/pages/:n.
   type: 'VIDEO' | 'PDF';
   pageCount?: number | null;
+  // Topics the lesson covers; [] when it has none. Sent for unbought courses too.
+  syllabus: string[];
   locked: boolean;
   completed: boolean;
 }

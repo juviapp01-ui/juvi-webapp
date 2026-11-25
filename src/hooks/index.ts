@@ -5,3 +5,4 @@ export * from './useDeviceLocation';
 export * from './useHomeLayout';
 export * from './useReels';
 export * from './useTrendDecode';
+export * from './useCourses';

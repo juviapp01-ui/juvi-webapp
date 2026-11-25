@@ -39,6 +39,29 @@ function flipReelInCaches(qc: ReturnType<typeof useQueryClient>, id: string, fli
   return matches;
 }
 
+export function useRecordReelView() {
+  return useMutation({ mutationFn: (id: string) => reelsApi.recordView(id) });
+}
+
+export function useToggleReelLike() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => reelsApi.toggleLike(id),
+    onMutate: async (id: string) => {
+      await qc.cancelQueries({ queryKey: ['reels'] });
+      const previous = flipReelInCaches(qc, id, (r) => ({
+        ...r,
+        isLiked: !r.isLiked,
+        likeCount: Math.max(0, (r.likeCount ?? 0) + (r.isLiked ? -1 : 1)),
+      }));
+      return { previous };
+    },
+    onError: (_err, _id, context) => {
+      context?.previous.forEach(([key, data]) => qc.setQueryData(key, data));
+    },
+  });
+}
+
 export function useToggleReelSave() {
   const qc = useQueryClient();
   return useMutation({

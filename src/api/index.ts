@@ -6,3 +6,5 @@ export * from './artists';
 export * from './homeLayout';
 export * from './reels';
 export * from './trendDecode';
+export * from './courses';
+export * from './payments';

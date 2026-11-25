@@ -18,6 +18,12 @@ import ViewAllServicesScreen from '@/screens/customer/ViewAllServicesScreen';
 import ArtistsInCityScreen from '@/screens/customer/ArtistsInCityScreen';
 import ArtistDetailScreen from '@/screens/customer/ArtistDetailScreen';
 import ServiceDetailScreen from '@/screens/customer/ServiceDetailScreen';
+import ExploreScreen from '@/screens/customer/ExploreScreen';
+import ReelsFeedScreen from '@/screens/customer/ReelsFeedScreen';
+import SearchResultsScreen from '@/screens/customer/SearchResultsScreen';
+import { TrendDecodeListScreen, TrendDecodeViewerScreen } from '@/screens/customer/TrendDecodeScreens';
+import { CourseDetailScreen, CourseListScreen, CoursePaymentScreen, CoursesHomeScreen } from '@/screens/customer/CoursesScreens';
+import LessonPlayerScreen from '@/screens/customer/LessonPlayerScreen';
 
 // ─── Who may see what ────────────────────────────────────────────────────────
 // Mirrors the app's RootNavigator: signed out → sign-in; signed in without a
@@ -141,8 +147,8 @@ export default function App() {
             {/* Customer tabs */}
             <Route element={<CustomerOnly><CustomerTabsLayout /></CustomerOnly>}>
               <Route path="/home" element={<Page title="Home"><HomeScreen /></Page>} />
-              <Route path="/explore" element={soon('Explore', true)} />
-              <Route path="/reels" element={soon('Reels', true)} />
+              <Route path="/explore" element={<Page title="Explore artists"><ExploreScreen /></Page>} />
+              <Route path="/reels" element={<Page title="Reels"><ReelsFeedScreen /></Page>} />
               <Route path="/chat" element={soon('Messages', true)} />
               <Route path="/profile" element={soon('Your profile', true)} />
             </Route>
@@ -152,10 +158,14 @@ export default function App() {
             <Route path="/city" element={customer('Artists in your city', <ArtistsInCityScreen />)} />
             <Route path="/artist/:artistId" element={customer('Artist', <ArtistDetailScreen />)} />
             <Route path="/artist/:artistId/service/:serviceId" element={customer('Service', <ServiceDetailScreen />)} />
-            <Route path="/search" element={<CustomerOnly>{soon('Search')}</CustomerOnly>} />
-            <Route path="/trend-decode" element={<CustomerOnly>{soon('Trend Decode')}</CustomerOnly>} />
-            <Route path="/trend-decode/:id" element={<CustomerOnly>{soon('Trend Decode')}</CustomerOnly>} />
-            <Route path="/courses/*" element={<CustomerOnly>{soon('Learn with Annalia')}</CustomerOnly>} />
+            <Route path="/search" element={customer('Search', <SearchResultsScreen />)} />
+            <Route path="/trend-decode" element={customer('Trend Decode', <TrendDecodeListScreen />)} />
+            <Route path="/trend-decode/:id" element={customer('Trend Decode', <TrendDecodeViewerScreen />)} />
+            <Route path="/courses" element={customer('Learn with Annalia', <CoursesHomeScreen />)} />
+            <Route path="/courses/category/:categoryId" element={customer('Courses', <CourseListScreen />)} />
+            <Route path="/courses/:courseId" element={customer('Course', <CourseDetailScreen />)} />
+            <Route path="/courses/:courseId/pay" element={customer('Checkout', <CoursePaymentScreen />)} />
+            <Route path="/courses/:courseId/lesson/:lessonId" element={customer('Lesson', <LessonPlayerScreen />)} />
             <Route path="/book" element={<CustomerOnly>{soon('Booking')}</CustomerOnly>} />
 
             {/* Partner area */}

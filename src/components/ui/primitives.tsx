@@ -68,9 +68,37 @@ type PressableProps = {
   type?: 'button' | 'submit';
   scaleTo?: number;
   className?: string;
+  // A card that holds its own buttons (save, heart…) can't be a <button>
+  // itself — buttons can't nest. This renders a <div role="button"> that
+  // still works with Enter / Space.
+  asDiv?: boolean;
 };
 
-export function Pressable({ onPress, disabled, style, children, ariaLabel, type = 'button', scaleTo, className }: PressableProps) {
+export function Pressable({ onPress, disabled, style, children, ariaLabel, type = 'button', scaleTo, className, asDiv }: PressableProps) {
+  const classes = `rn-press${scaleTo ? ' rn-scale' : ''}${className ? ` ${className}` : ''}`;
+  const merged = { ...VIEW_BASE, ...(scaleTo ? ({ '--press-scale': scaleTo } as CSSProperties) : {}), ...expandFlex(style) };
+  if (asDiv) {
+    return (
+      <div
+        role="button"
+        tabIndex={disabled ? -1 : 0}
+        aria-disabled={disabled || undefined}
+        aria-label={ariaLabel}
+        className={classes}
+        style={merged}
+        onClick={(e) => !disabled && onPress?.(e)}
+        onKeyDown={(e) => {
+          if (disabled || e.target !== e.currentTarget) return;
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            onPress?.(e as unknown as React.MouseEvent);
+          }
+        }}
+      >
+        {children}
+      </div>
+    );
+  }
   return (
     <button
       type={type}

@@ -14,10 +14,10 @@ function firstSegment(description?: string): string | undefined {
   return segment || undefined;
 }
 
-function TrendDecodeCardImpl({ item, onPress }: { item: TrendDecodeItem; onPress: () => void }) {
+function TrendDecodeCardImpl({ item, onPress, fill }: { item: TrendDecodeItem; onPress: () => void; fill?: boolean }) {
   const subtitle = firstSegment(item.description);
   return (
-    <PressableScale scaleTo={0.95} onPress={onPress} style={cardStyles.card} ariaLabel={item.title}>
+    <PressableScale scaleTo={0.95} onPress={onPress} style={fill ? { ...cardStyles.card, width: '100%' } : cardStyles.card} ariaLabel={item.title}>
       <Img src={getSizedImageUri(item.thumbnailUrl, 160)} style={cardStyles.thumbnail} />
       <View style={{ ...absoluteFill, background: 'linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.15) 50%, rgba(0,0,0,0.85) 100%)' }} />
       <View style={cardStyles.playBadge}>
