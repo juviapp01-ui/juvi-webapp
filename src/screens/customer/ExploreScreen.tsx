@@ -321,7 +321,7 @@ const styles = sheet({
   avatarMini: { width: 40, height: 40, borderRadius: 20, borderWidth: 1, borderColor: '#d7c1c3', overflow: 'hidden' },
   stickyHeader: { position: 'sticky', top: 0, zIndex: 20, paddingHorizontal: 20, paddingTop: 8, paddingBottom: 8, backgroundColor: '#fff8f5' },
   searchRow: { flexDirection: 'row', gap: 10, marginBottom: 20, alignItems: 'center' },
-  searchContainer: { display: 'flex', flex: 1, flexDirection: 'row', alignItems: 'center', backgroundColor: '#ffffff', borderRadius: 30, paddingHorizontal: 16, height: 48, gap: 10 },
+  searchContainer: { display: 'flex', flex: 1, flexDirection: 'row', alignItems: 'center', backgroundColor: '#ffffff', borderRadius: 30, paddingHorizontal: 16, height: 48, gap: 10, minWidth: 0 },
   searchInput: { flex: 1, fontFamily: 'Inter_400Regular', fontSize: 14, color: '#1e1b18' },
   filterBtn: { width: 48, height: 48, borderRadius: 24, backgroundColor: '#ffffff', alignItems: 'center', justifyContent: 'center' },
   tabsRow: { flexDirection: 'row', borderBottomWidth: 1, borderBottomColor: 'rgba(215, 193, 195, 0.2)' },

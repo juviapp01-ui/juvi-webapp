@@ -1,7 +1,8 @@
 import { useMutation } from '@tanstack/react-query';
 import { authApi } from '@/api';
 import { useAuthStore } from '@/store/authStore';
-import { confirmPhoneCode, phoneAuthSession, sendPhoneCode } from '@/lib/firebase';
+// Firebase (the biggest library on the site) loads only when someone signs in.
+const firebase = () => import('@/lib/firebase');
 import { isNetworkFailure } from '@/utils/errors';
 import { User } from '@/types';
 
@@ -30,12 +31,12 @@ export function useAuth() {
   const { setSession, logout, user, isAuthenticated } = useAuthStore();
 
   const sendPhoneOtp = useMutation({
-    mutationFn: ({ phone }: { phone: string }) => sendPhoneCode(phone),
+    mutationFn: async ({ phone }: { phone: string }) => (await firebase()).sendPhoneCode(phone),
   });
 
   const verifyPhoneOtp = useMutation({
     mutationFn: async (code: string) => {
-      const idToken = await confirmPhoneCode(code);
+      const idToken = await (await firebase()).confirmPhoneCode(code);
       // One retry when the request never got a response — safe, the same ID
       // token just signs the same user in again.
       try {
@@ -46,8 +47,8 @@ export function useAuth() {
         return authApi.verifyFirebaseToken(idToken);
       }
     },
-    onSuccess: (res) => {
-      phoneAuthSession.clear();
+    onSuccess: async (res) => {
+      (await firebase()).phoneAuthSession.clear();
       applySessionFromResponse(res.data as any, setSession);
     },
   });

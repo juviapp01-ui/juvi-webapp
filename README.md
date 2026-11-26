@@ -57,16 +57,66 @@ Firebase phone sign-in with invisible reCAPTCHA, then the backend's
 session (access + refresh token) is kept in `localStorage`; the API client
 refreshes an expired token once for all waiting requests, like the app.
 
-## Payments
+## What's on the site
 
-Paytm is **stubbed** on the website: every flow goes up to the pay step and
-then shows a clearly-labelled placeholder. The web flow needs backend and
-Paytm dashboard work first (a web return page and the site's domain allowed
-in Paytm).
+**Customers:** Home, Explore (search, filters, trending, saved), Reels, artist
+and service pages, reviews, Trend Decode, Learn with Annalia (courses, video
+and PDF lessons with syllabus), booking (pick a date/time from live slots,
+confirm with home/studio, address, notes and price breakdown), My Bookings
+(detail, start/finish code, cancel with refund request, reschedule, write a
+review), Messages (chat with the JUVI team, live), You (edit profile, saved
+addresses, Refer & Earn, JUVI Rewards, notifications), Settings (notification
+preferences, blocked accounts, help, terms & privacy, delete account).
 
-## Deploying
+**Artists** (`/partner`): Home (new bookings, stats, reels, learning),
+Schedule (accept/decline, start/finish codes, cancel), Availability (working
+hours, pause, Block time), Inbox, Earnings (withdraw, payout history,
+bank/UPI details), Account (edit profile, services, portfolio, studio &
+location, my reels with upload, reviews with replies, subscription,
+analytics). Signed-in customers who aren't artists see their artist
+application here (status, then four onboarding steps).
 
-`vercel.json` serves every path from `index.html` (client-side routing).
-Outside this folder the site also needs: the domain added to Firebase
-Authorized domains, the storage bucket's CORS allowing the site's origin
-(direct photo/video uploads), and — for payments — the Paytm web setup.
+## Payments (stubbed)
+
+Paytm is **stubbed** on the website: booking advance, remaining balance,
+course purchase and subscription upgrade all go up to the pay step and then
+show a clearly-labelled "PAYMENT PLACEHOLDER" with the pay button disabled.
+Because of that the website does **not create bookings** — a booking only
+exists once its advance is paid. Cancelling (with the refund request),
+rescheduling and everything after payment work for bookings made in the app.
+
+To switch payments on, the backend needs a web flow (a return/callback page
+for the site and an endpoint that accepts it), and the site's domain must be
+allowed in the Paytm dashboard. Then `PaymentStub` is replaced with Paytm's
+JS checkout.
+
+## Not the same as the app
+
+- Studio location: the app drops a pin on a map; the site uses the browser's
+  location ("Use my current location").
+- Reel upload: MP4 only, up to 100 MB, no in-browser compression; the
+  thumbnail is a frame grabbed from the video.
+- Saved addresses live in this browser (the app keeps them on the phone —
+  there's no address list on the backend).
+- No push notifications; the notification settings control the app's alerts.
+
+## Deploying (Vercel)
+
+`vercel.json` builds with `npm run build`, serves `dist/`, and sends every
+path to `index.html` (client-side routing), with long caching for hashed
+files. Set the `VITE_*` settings in the Vercel project's Environment
+Variables.
+
+Outside this folder the site also needs:
+
+1. **Firebase** (project used by the app): add a Web app if there isn't one
+   (its config goes in the `VITE_FIREBASE_*` settings); add the site's
+   domain under Authentication → Settings → Authorized domains; if the web
+   API key has HTTP-referrer restrictions, add the site's domain there.
+2. **Storage bucket CORS**: photo, Aadhaar, portfolio and reel uploads go
+   straight from the browser to the bucket with signed URLs, so the bucket
+   must allow `PUT` from the site's origin with the `Content-Type` header.
+3. **Backend**: no change needed for what's live — CORS is already open and
+   the site uses the same endpoints as the app.
+4. **Google Maps key** (optional): only names the browser's location on Home.
+5. **Paytm**: see Payments above.

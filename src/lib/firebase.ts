@@ -19,7 +19,8 @@ let app: FirebaseApp | null = null;
 let auth: Auth | null = null;
 let verifier: RecaptchaVerifier | null = null;
 
-export const RECAPTCHA_CONTAINER_ID = 'recaptcha-container';
+import { RECAPTCHA_CONTAINER_ID } from './recaptcha';
+export { RECAPTCHA_CONTAINER_ID };
 
 function firebaseAuth(): Auth {
   if (!auth) {

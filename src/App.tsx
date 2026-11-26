@@ -1,7 +1,7 @@
-import { useEffect, useState, type ReactNode } from 'react';
+import { lazy, Suspense, useEffect, useState, type ComponentType, type ReactNode } from 'react';
 import { Navigate, Route, Routes, useLocation, useParams } from 'react-router-dom';
 import { missingEnv } from '@/config/env';
-import { RECAPTCHA_CONTAINER_ID } from '@/lib/firebase';
+import { RECAPTCHA_CONTAINER_ID } from '@/lib/recaptcha';
 import { profileApi } from '@/api';
 import { useAuthStore } from '@/store/authStore';
 import { Spinner, Toast, View } from '@/components/ui';
@@ -21,14 +21,60 @@ import ExploreScreen from '@/screens/customer/ExploreScreen';
 import ReelsFeedScreen from '@/screens/customer/ReelsFeedScreen';
 import SearchResultsScreen from '@/screens/customer/SearchResultsScreen';
 import { TrendDecodeListScreen, TrendDecodeViewerScreen } from '@/screens/customer/TrendDecodeScreens';
-import { CourseDetailScreen, CourseListScreen, CoursePaymentScreen, CoursesHomeScreen } from '@/screens/customer/CoursesScreens';
-import LessonPlayerScreen from '@/screens/customer/LessonPlayerScreen';
-import { BookingConfirmScreen, BookingPayScreen, SlotPickerScreen } from '@/screens/booking/BookingFlow';
-import { BookingDetailScreen, BookingPaymentScreen, CancelBookingScreen, MyBookingsScreen, RescheduleBookingScreen, WriteReviewScreen } from '@/screens/booking/Bookings';
-import { EditProfileScreen, LoyaltyScreen, NotificationsScreen, PaymentMethodsScreen, ProfileTabScreen, ReferralScreen, ReviewsScreen, SavedAddressesScreen } from '@/screens/account/Account';
-import { BlockedAccountsScreen, DeleteAccountScreen, HelpSupportScreen, LegalScreen, NotificationPreferencesScreen, SettingsScreen } from '@/screens/account/Settings';
-import { ChatListScreen, ChatRoomScreen } from '@/screens/chat/Chat';
-import PartnerRoutes from '@/screens/partner/PartnerRoutes';
+
+// ─── Code splitting ─────────────────────────────────────────────────────────
+// Sign-in, Home, Explore, Reels and artist pages load up front; everything
+// else (booking, account, chat, courses, the partner area) loads when first
+// opened, so the first visit downloads less.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function named<M extends Record<string, any>>(loader: () => Promise<M>, name: keyof M & string) {
+  return lazy(() => loader().then((m) => ({ default: m[name] as ComponentType<any> })));
+}
+const loadCoursesScreens = () => import('@/screens/customer/CoursesScreens');
+const CourseDetailScreen = named(loadCoursesScreens, 'CourseDetailScreen');
+const CourseListScreen = named(loadCoursesScreens, 'CourseListScreen');
+const CoursePaymentScreen = named(loadCoursesScreens, 'CoursePaymentScreen');
+const CoursesHomeScreen = named(loadCoursesScreens, 'CoursesHomeScreen');
+const loadBookingFlow = () => import('@/screens/booking/BookingFlow');
+const BookingConfirmScreen = named(loadBookingFlow, 'BookingConfirmScreen');
+const BookingPayScreen = named(loadBookingFlow, 'BookingPayScreen');
+const SlotPickerScreen = named(loadBookingFlow, 'SlotPickerScreen');
+const loadBookings = () => import('@/screens/booking/Bookings');
+const BookingDetailScreen = named(loadBookings, 'BookingDetailScreen');
+const BookingPaymentScreen = named(loadBookings, 'BookingPaymentScreen');
+const CancelBookingScreen = named(loadBookings, 'CancelBookingScreen');
+const MyBookingsScreen = named(loadBookings, 'MyBookingsScreen');
+const RescheduleBookingScreen = named(loadBookings, 'RescheduleBookingScreen');
+const WriteReviewScreen = named(loadBookings, 'WriteReviewScreen');
+const loadAccount = () => import('@/screens/account/Account');
+const EditProfileScreen = named(loadAccount, 'EditProfileScreen');
+const LoyaltyScreen = named(loadAccount, 'LoyaltyScreen');
+const NotificationsScreen = named(loadAccount, 'NotificationsScreen');
+const PaymentMethodsScreen = named(loadAccount, 'PaymentMethodsScreen');
+const ProfileTabScreen = named(loadAccount, 'ProfileTabScreen');
+const ReferralScreen = named(loadAccount, 'ReferralScreen');
+const ReviewsScreen = named(loadAccount, 'ReviewsScreen');
+const SavedAddressesScreen = named(loadAccount, 'SavedAddressesScreen');
+const loadSettings = () => import('@/screens/account/Settings');
+const BlockedAccountsScreen = named(loadSettings, 'BlockedAccountsScreen');
+const DeleteAccountScreen = named(loadSettings, 'DeleteAccountScreen');
+const HelpSupportScreen = named(loadSettings, 'HelpSupportScreen');
+const LegalScreen = named(loadSettings, 'LegalScreen');
+const NotificationPreferencesScreen = named(loadSettings, 'NotificationPreferencesScreen');
+const SettingsScreen = named(loadSettings, 'SettingsScreen');
+const loadChat = () => import('@/screens/chat/Chat');
+const ChatListScreen = named(loadChat, 'ChatListScreen');
+const ChatRoomScreen = named(loadChat, 'ChatRoomScreen');
+const LessonPlayerScreen = lazy(() => import('@/screens/customer/LessonPlayerScreen'));
+const PartnerRoutes = lazy(() => import('@/screens/partner/PartnerRoutes'));
+
+function RouteFallback() {
+  return (
+    <View style={{ flex: 1, minHeight: '60vh', alignItems: 'center', justifyContent: 'center' }} role="status" aria-label="Loading">
+      <Spinner size="large" />
+    </View>
+  );
+}
 
 // ─── Who may see what ────────────────────────────────────────────────────────
 // Mirrors the app's RootNavigator: signed out → sign-in; signed in without a
@@ -149,6 +195,7 @@ export default function App() {
     <AppColumn>
       <ErrorBoundary>
         <SessionBootstrap>
+          <Suspense fallback={<RouteFallback />}>
           <Routes>
             <Route path="/" element={<RootRedirect />} />
 
@@ -212,6 +259,7 @@ export default function App() {
 
             <Route path="*" element={<Page title="Page not found"><NotFoundScreen /></Page>} />
           </Routes>
+          </Suspense>
         </SessionBootstrap>
       </ErrorBoundary>
       <Toast />

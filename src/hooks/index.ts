@@ -8,7 +8,7 @@ export * from './useTrendDecode';
 export * from './useCourses';
 export * from './useBookings';
 export * from './useNotifications';
-export * from './useChatSocket';
+// useChatSocket is imported directly (not from here) so socket.io loads only with chat.
 export * from './usePageContent';
 export * from './useBlocks';
 export * from './useReports';

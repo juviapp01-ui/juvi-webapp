@@ -141,3 +141,38 @@ a {
 .grecaptcha-badge {
   z-index: 50;
 }
+
+/* Keyboard focus for native controls too (links, fields, selects, the
+   few plain buttons, FAQ summaries). Mouse clicks don't show it. */
+a:focus-visible,
+select:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+button:not(.rn-press):focus-visible,
+summary:focus-visible,
+[role='button']:focus-visible {
+  outline: 2px solid #884952;
+  outline-offset: 2px;
+}
+select {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+button:disabled {
+  cursor: default;
+}
+img {
+  max-width: 100%;
+}
+@media (prefers-reduced-motion: reduce) {
+  .rn-scale:active:not(:disabled) {
+    transform: none;
+  }
+  .skeleton {
+    animation: none;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+}
