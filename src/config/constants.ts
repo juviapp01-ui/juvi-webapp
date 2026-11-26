@@ -52,3 +52,10 @@ export const LOYALTY_TIERS = [
   { tier: 'silver', min: 500 },
   { tier: 'gold', min: 2000 },
 ] as const;
+
+// Plan copy shown on Subscription; live prices come from GET /subscription-plans.
+export const SUBSCRIPTION_TIERS = [
+  { tier: 'free', price: 0, portfolio: 8, perks: ['Standard listing', 'Basic analytics'] },
+  { tier: 'pro', price: 499, portfolio: 20, perks: ['Featured badge', 'Priority search', 'Weekly analytics'] },
+  { tier: 'elite', price: 999, portfolio: 50, perks: ['Homepage placement', 'Reels boost', 'Dedicated support'] },
+] as const;

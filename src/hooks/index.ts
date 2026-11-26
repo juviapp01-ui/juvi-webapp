@@ -12,3 +12,4 @@ export * from './useChatSocket';
 export * from './usePageContent';
 export * from './useBlocks';
 export * from './useReports';
+export * from './useDashboard';

@@ -49,3 +49,11 @@ export function useFollowArtist() {
     },
   });
 }
+
+// The signed-in artist's own profile (partner area).
+export function useMyArtistProfile() {
+  return useQuery<Artist>({
+    queryKey: ['artist', 'me'],
+    queryFn: () => artistsApi.getMyProfile().then((r) => r.data),
+  });
+}

@@ -8,7 +8,6 @@ import { Spinner, Toast, View } from '@/components/ui';
 import { ErrorBoundary, Page } from '@/components/ui/Page';
 import { AppColumn, CustomerTabsLayout } from '@/layouts/AppShell';
 import MissingEnvScreen from '@/screens/stubs/MissingEnvScreen';
-import ComingSoonScreen from '@/screens/stubs/ComingSoonScreen';
 import NotFoundScreen from '@/screens/stubs/NotFoundScreen';
 import PhoneLoginScreen from '@/screens/auth/PhoneLoginScreen';
 import PhoneOtpVerifyScreen from '@/screens/auth/PhoneOtpVerifyScreen';
@@ -29,6 +28,7 @@ import { BookingDetailScreen, BookingPaymentScreen, CancelBookingScreen, MyBooki
 import { EditProfileScreen, LoyaltyScreen, NotificationsScreen, PaymentMethodsScreen, ProfileTabScreen, ReferralScreen, ReviewsScreen, SavedAddressesScreen } from '@/screens/account/Account';
 import { BlockedAccountsScreen, DeleteAccountScreen, HelpSupportScreen, LegalScreen, NotificationPreferencesScreen, SettingsScreen } from '@/screens/account/Settings';
 import { ChatListScreen, ChatRoomScreen } from '@/screens/chat/Chat';
+import PartnerRoutes from '@/screens/partner/PartnerRoutes';
 
 // ─── Who may see what ────────────────────────────────────────────────────────
 // Mirrors the app's RootNavigator: signed out → sign-in; signed in without a
@@ -134,11 +134,6 @@ export default function App() {
     );
   }
 
-  const soon = (title: string, inTabs = false) => (
-    <Page title={title}>
-      <ComingSoonScreen title={title} inTabs={inTabs} />
-    </Page>
-  );
   const signedIn = (title: string, element: ReactNode) => (
     <SignedIn>
       <Page title={title}>{element}</Page>
@@ -177,13 +172,13 @@ export default function App() {
             <Route path="/artist/:artistId" element={customer('Artist', <ArtistDetailScreen />)} />
             <Route path="/artist/:artistId/service/:serviceId" element={customer('Service', <ServiceDetailScreen />)} />
             <Route path="/search" element={customer('Search', <SearchResultsScreen />)} />
-            <Route path="/trend-decode" element={customer('Trend Decode', <TrendDecodeListScreen />)} />
-            <Route path="/trend-decode/:id" element={customer('Trend Decode', <TrendDecodeViewerScreen />)} />
-            <Route path="/courses" element={customer('Learn with Annalia', <CoursesHomeScreen />)} />
-            <Route path="/courses/category/:categoryId" element={customer('Courses', <CourseListScreen />)} />
-            <Route path="/courses/:courseId" element={customer('Course', <CourseDetailScreen />)} />
-            <Route path="/courses/:courseId/pay" element={customer('Checkout', <CoursePaymentScreen />)} />
-            <Route path="/courses/:courseId/lesson/:lessonId" element={customer('Lesson', <LessonPlayerScreen />)} />
+            <Route path="/trend-decode" element={signedIn('Trend Decode', <TrendDecodeListScreen />)} />
+            <Route path="/trend-decode/:id" element={signedIn('Trend Decode', <TrendDecodeViewerScreen />)} />
+            <Route path="/courses" element={signedIn('Learn with Annalia', <CoursesHomeScreen />)} />
+            <Route path="/courses/category/:categoryId" element={signedIn('Courses', <CourseListScreen />)} />
+            <Route path="/courses/:courseId" element={signedIn('Course', <CourseDetailScreen />)} />
+            <Route path="/courses/:courseId/pay" element={signedIn('Checkout', <CoursePaymentScreen />)} />
+            <Route path="/courses/:courseId/lesson/:lessonId" element={signedIn('Lesson', <LessonPlayerScreen />)} />
             <Route path="/artist/:artistId/reviews" element={customer('Reviews', <ArtistReviewsRoute />)} />
 
             {/* Booking */}
@@ -213,7 +208,7 @@ export default function App() {
             <Route path="/legal" element={<Page title="Terms & privacy"><LegalScreen /></Page>} />
 
             {/* Partner area */}
-            <Route path="/partner/*" element={<PartnerAreaGuard>{soon('Partner')}</PartnerAreaGuard>} />
+            <Route path="/partner/*" element={<PartnerAreaGuard><PartnerRoutes /></PartnerAreaGuard>} />
 
             <Route path="*" element={<Page title="Page not found"><NotFoundScreen /></Page>} />
           </Routes>

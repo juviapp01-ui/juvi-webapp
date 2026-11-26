@@ -81,3 +81,21 @@ export function useToggleReelSave() {
     onSettled: () => qc.invalidateQueries({ queryKey: ['reels', 'saved'] }),
   });
 }
+
+// The artist's own reels (partner area).
+export function useMyReels() {
+  return useInfiniteQuery<Paginated<Reel>, Error, InfiniteData<Paginated<Reel>>, any[], number>({
+    queryKey: ['reels', 'mine'],
+    queryFn: ({ pageParam = 1 }) => reelsApi.mine({ page: pageParam }),
+    initialPageParam: 1,
+    getNextPageParam: (last) => (last.page * last.pageSize < last.total ? last.page + 1 : undefined),
+  });
+}
+
+export function useDeleteReel() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => reelsApi.remove(id),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['reels', 'mine'] }),
+  });
+}

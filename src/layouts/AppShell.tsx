@@ -50,6 +50,42 @@ export function CustomerTabsLayout() {
   );
 }
 
+// ─── Partner (artist) tabs ──────────────────────────────────────────────────
+// Port of frontend/src/navigation/ArtistTabs.tsx: six labelled tabs, a badge
+// on Schedule for new bookings and a dot on Inbox for unread notifications.
+const PARTNER_TABS: { to: string; label: string; active: IconName; inactive: IconName; end?: boolean }[] = [
+  { to: '/partner', label: 'Home', active: 'home', inactive: 'home-outline', end: true },
+  { to: '/partner/schedule', label: 'Schedule', active: 'calendar', inactive: 'calendar-outline' },
+  { to: '/partner/reels', label: 'Reels', active: 'film', inactive: 'film-outline' },
+  { to: '/partner/chat', label: 'Inbox', active: 'chatbubble', inactive: 'chatbubble-outline' },
+  { to: '/partner/earnings', label: 'Earnings', active: 'card', inactive: 'card-outline' },
+  { to: '/partner/account', label: 'Account', active: 'person', inactive: 'person-outline' },
+];
+
+export function PartnerTabsLayout({ newBookings = 0, unread = 0 }: { newBookings?: number; unread?: number }) {
+  return (
+    <>
+      <Outlet />
+      <nav style={tabs.partnerBar} aria-label="Partner">
+        {PARTNER_TABS.map((t) => (
+          <NavLink key={t.to} to={t.to} end={t.end} style={tabs.partnerLink} aria-label={t.label}>
+            {({ isActive }) => (
+              <>
+                <span style={{ position: 'relative', display: 'flex' }}>
+                  <Icon name={isActive ? t.active : t.inactive} size={22} color={isActive ? '#1e1b18' : '#827378'} />
+                  {t.label === 'Schedule' && newBookings > 0 && <span style={tabs.newBadge}>{newBookings}</span>}
+                  {t.label === 'Inbox' && unread > 0 && <span style={tabs.dot} />}
+                </span>
+                <span style={cx(tabs.partnerLabel, { color: isActive ? '#1e1b18' : '#827378' })}>{t.label}</span>
+              </>
+            )}
+          </NavLink>
+        ))}
+      </nav>
+    </>
+  );
+}
+
 const shell = sheet({
   column: {
     position: 'relative', width: '100%', maxWidth: COLUMN_MAX_WIDTH, minHeight: '100vh', margin: '0 auto',
@@ -69,5 +105,17 @@ const tabs = sheet({
   iconContainer: { display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%' },
   homeIconContainer: { height: 44, width: 44, borderRadius: 22, display: 'flex', alignItems: 'center', justifyContent: 'center' },
   homeIconActive: { backgroundColor: '#884952' },
+  partnerBar: {
+    position: 'fixed', bottom: 0, left: '50%', transform: 'translateX(-50%)', width: '100%', maxWidth: COLUMN_MAX_WIDTH, zIndex: 40,
+    display: 'flex', flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', paddingTop: 8, paddingBottom: 'max(12px, env(safe-area-inset-bottom))',
+    backgroundColor: 'rgba(251,249,245,0.92)', backdropFilter: 'blur(14px)', borderTopWidth: 1, borderTopColor: 'rgba(212,194,199,0.3)',
+  },
+  partnerLink: { flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, textDecoration: 'none' },
+  partnerLabel: { fontFamily: 'Inter_600SemiBold', fontSize: 9, letterSpacing: 1, textTransform: 'uppercase' },
+  newBadge: {
+    position: 'absolute', top: -8, right: -16, backgroundColor: '#E4407A', color: '#fff', borderRadius: 999, padding: '1px 5px',
+    fontFamily: 'Inter_600SemiBold', fontSize: 10, borderWidth: 1.5, borderColor: '#fff', borderStyle: 'solid',
+  },
+  dot: { position: 'absolute', top: -2, right: -4, width: 7, height: 7, borderRadius: 4, backgroundColor: '#AE728D' },
   activeIndicator: { width: 4, height: 4, borderRadius: 2, backgroundColor: '#884952', marginTop: 4 },
 });
