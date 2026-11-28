@@ -16,6 +16,9 @@ export const ENV = {
   WS_URL: read('VITE_WS_URL') || read('VITE_API_URL').replace(/\/+$/, '').replace(/^http/, 'ws'),
   GOOGLE_MAPS_KEY: read('VITE_GOOGLE_MAPS_KEY'),
   PAYTM_ENV: read('VITE_PAYTM_ENV') || 'STAGING',
+  // Landing page store buttons (public links); override in .env if needed.
+  APP_STORE_URL: read('VITE_APP_STORE_URL') || 'https://apps.apple.com/app/juvi/id6787046486',
+  PLAY_STORE_URL: read('VITE_PLAY_STORE_URL') || 'https://play.google.com/store/apps/details?id=com.juvi.app',
 };
 
 // Settings the site can't work without. Shown on a setup screen instead of

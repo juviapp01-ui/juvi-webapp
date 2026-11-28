@@ -21,6 +21,9 @@ export default function MissingEnvScreen({ missing }: { missing: string[] }) {
           </Text>
         ))}
       </View>
+      <a href="/" style={styles.back}>
+        ← Back to the JUVI home page
+      </a>
     </View>
   );
 }
@@ -32,4 +35,5 @@ const styles = sheet({
   code: { fontFamily: 'Inter_600SemiBold', color: '#884952' },
   list: { backgroundColor: '#FFFFFF', borderWidth: 1, borderColor: '#efe6e2', borderRadius: 12, padding: 16, gap: 8 },
   item: { fontFamily: 'Inter_600SemiBold', fontSize: 13, color: '#1e1b18' },
+  back: { display: 'block', marginTop: 24, textAlign: 'center', fontFamily: 'Inter_600SemiBold', fontSize: 13, color: '#884952' },
 });

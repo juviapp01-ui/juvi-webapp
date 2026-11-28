@@ -9,6 +9,7 @@ import { ErrorBoundary, Page } from '@/components/ui/Page';
 import { AppColumn, CustomerTabsLayout } from '@/layouts/AppShell';
 import MissingEnvScreen from '@/screens/stubs/MissingEnvScreen';
 import NotFoundScreen from '@/screens/stubs/NotFoundScreen';
+import LandingPage from '@/screens/landing/LandingPage';
 import PhoneLoginScreen from '@/screens/auth/PhoneLoginScreen';
 import PhoneOtpVerifyScreen from '@/screens/auth/PhoneOtpVerifyScreen';
 import ProfileSetupScreen from '@/screens/auth/ProfileSetupScreen';
@@ -169,6 +170,13 @@ function SessionBootstrap({ children }: { children: ReactNode }) {
 }
 
 export default function App() {
+  const location = useLocation();
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  // Signed-out visitors at "/" get the full-width public landing page. It
+  // needs no backend, so it also shows while .env is incomplete (a stale
+  // saved sign-in would otherwise land on the setup screen).
+  if (location.pathname === '/' && (!isAuthenticated || missingEnv().length > 0)) return <LandingPage />;
+
   const missing = missingEnv();
   if (missing.length > 0) {
     return (

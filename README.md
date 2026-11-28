@@ -46,6 +46,8 @@ Names only — the values are yours and `.env` is never committed.
 | `VITE_FIREBASE_MESSAGING_SENDER_ID` | no | 〃 |
 | `VITE_GOOGLE_MAPS_KEY` | no | Only to name the browser's location on Home ("Dimapur"); without it the header says "Near You" |
 | `VITE_PAYTM_ENV` | no | Not used yet — payments are stubbed (see below) |
+| `VITE_APP_STORE_URL` | no | Overrides the landing page App Store link (defaults to the live JUVI listing) |
+| `VITE_PLAY_STORE_URL` | no | 〃 for Android |
 
 Every `VITE_*` value ends up in the built site and is readable by anyone who
 loads it — only browser-safe, public identifiers belong here.
